@@ -63,6 +63,8 @@ extern void get_dhcp_info();
 extern int init_module(void *, unsigned long, const char *);
 extern int delete_module(const char *, unsigned int);
 
+static int wifi_mode = 0;
+
 static char primary_iface[PROPERTY_VALUE_MAX];
 // TODO: use new ANDROID_SOCKET mechanism, once support for multiple
 // sockets is in
@@ -681,7 +683,7 @@ int wifi_start_supplicant(int p2p_supported)
         snprintf(supplicant_prop_name, PROPERTY_KEY_MAX, SUPP_PROP_NAME, supplicant_name);
     }
 
-    wifi_stop_supplicant();
+    wifi_stop_supplicant(0);
     wifi_close_supplicant_connection(NULL);
     wifi_close_supplicant_connection("sec");
 
@@ -767,7 +769,7 @@ int wifi_start_supplicant(int p2p_supported)
     return -1;
 }
 
-int wifi_stop_supplicant()
+int wifi_stop_supplicant(int p2pSupported)
 {
     char supp_status[PROPERTY_VALUE_MAX] = {'\0'};
     int count = 50; /* wait at most 5 seconds for completion */
@@ -1070,4 +1072,9 @@ int wifi_change_fw_path(const char *fwpath)
     close(fd);
 #endif
     return ret;
+}
+
+int wifi_set_mode(int mode) {
+    wifi_mode = mode;
+    return 0;
 }
